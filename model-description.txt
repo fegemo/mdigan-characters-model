@@ -1,0 +1,509 @@
+Model: "CollaGANDiscriminator"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ real_or_fake_image (InputLayer  [(None, 64, 64, 4)]  0          []                               
+ )                                                                                                
+                                                                                                  
+ concatenate_2 (Concatenate)    (None, 64, 64, 4)    0           ['real_or_fake_image[0][0]']     
+                                                                                                  
+ conv2d_94 (Conv2D)             (None, 32, 32, 64)   4096        ['concatenate_2[0][0]']          
+                                                                                                  
+ leaky_re_lu (LeakyReLU)        (None, 32, 32, 64)   0           ['conv2d_94[0][0]']              
+                                                                                                  
+ conv2d_95 (Conv2D)             (None, 16, 16, 128)  131072      ['leaky_re_lu[0][0]']            
+                                                                                                  
+ leaky_re_lu_1 (LeakyReLU)      (None, 16, 16, 128)  0           ['conv2d_95[0][0]']              
+                                                                                                  
+ conv2d_96 (Conv2D)             (None, 8, 8, 256)    524288      ['leaky_re_lu_1[0][0]']          
+                                                                                                  
+ leaky_re_lu_2 (LeakyReLU)      (None, 8, 8, 256)    0           ['conv2d_96[0][0]']              
+                                                                                                  
+ conv2d_97 (Conv2D)             (None, 4, 4, 512)    2097152     ['leaky_re_lu_2[0][0]']          
+                                                                                                  
+ leaky_re_lu_3 (LeakyReLU)      (None, 4, 4, 512)    0           ['conv2d_97[0][0]']              
+                                                                                                  
+ conv2d_98 (Conv2D)             (None, 2, 2, 1024)   8388608     ['leaky_re_lu_3[0][0]']          
+                                                                                                  
+ leaky_re_lu_4 (LeakyReLU)      (None, 2, 2, 1024)   0           ['conv2d_98[0][0]']              
+                                                                                                  
+ conv2d_99 (Conv2D)             (None, 1, 1, 2048)   33554432    ['leaky_re_lu_4[0][0]']          
+                                                                                                  
+ leaky_re_lu_5 (LeakyReLU)      (None, 1, 1, 2048)   0           ['conv2d_99[0][0]']              
+                                                                                                  
+ dropout (Dropout)              (None, 1, 1, 2048)   0           ['leaky_re_lu_5[0][0]']          
+                                                                                                  
+ conv2d_100 (Conv2D)            (None, 1, 1, 4)      8192        ['dropout[0][0]']                
+                                                                                                  
+ discriminator_patches (Conv2D)  (None, 1, 1, 1)     18432       ['dropout[0][0]']                
+                                                                                                  
+ domain_classification (Reshape  (None, 4)           0           ['conv2d_100[0][0]']             
+ )                                                                                                
+                                                                                                  
+==================================================================================================
+Total params: 44,726,272
+Trainable params: 44,726,272
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+
+Model: "CollaGANAffluentGenerator"
+__________________________________________________________________________________________________
+ Layer (type)                   Output Shape         Param #     Connected to                     
+==================================================================================================
+ target_domain (InputLayer)     [(None, 1)]          0           []                               
+                                                                                                  
+ category_encoding (CategoryEnc  (None, 4)           0           ['target_domain[0][0]']          
+ oding)                                                                                           
+                                                                                                  
+ source_images (InputLayer)     [(None, 4, 64, 64,   0           []                               
+                                4)]                                                               
+                                                                                                  
+ tile_layer (TileLayer)         (None, 64, 4)        0           ['category_encoding[0][0]']      
+                                                                                                  
+ tf.unstack (TFOpLambda)        [(None, 64, 64, 4),  0           ['source_images[0][0]']          
+                                 (None, 64, 64, 4),                                               
+                                 (None, 64, 64, 4),                                               
+                                 (None, 64, 64, 4)]                                               
+                                                                                                  
+ tile_layer_1 (TileLayer)       (None, 64, 64, 4)    0           ['tile_layer[0][0]']             
+                                                                                                  
+ tf.concat (TFOpLambda)         (None, 64, 64, 8)    0           ['tf.unstack[0][0]',             
+                                                                  'tile_layer_1[0][0]']           
+                                                                                                  
+ tf.concat_1 (TFOpLambda)       (None, 64, 64, 8)    0           ['tf.unstack[0][1]',             
+                                                                  'tile_layer_1[0][0]']           
+                                                                                                  
+ tf.concat_2 (TFOpLambda)       (None, 64, 64, 8)    0           ['tf.unstack[0][2]',             
+                                                                  'tile_layer_1[0][0]']           
+                                                                                                  
+ tf.concat_3 (TFOpLambda)       (None, 64, 64, 8)    0           ['tf.unstack[0][3]',             
+                                                                  'tile_layer_1[0][0]']           
+                                                                                                  
+ conv2d_101 (Conv2D)            (None, 64, 64, 64)   4672        ['tf.concat[0][0]']              
+                                                                                                  
+ conv2d_113 (Conv2D)            (None, 64, 64, 64)   4672        ['tf.concat_1[0][0]']            
+                                                                                                  
+ conv2d_125 (Conv2D)            (None, 64, 64, 64)   4672        ['tf.concat_2[0][0]']            
+                                                                                                  
+ conv2d_137 (Conv2D)            (None, 64, 64, 64)   4672        ['tf.concat_3[0][0]']            
+                                                                                                  
+ instance_normalization (Instan  (None, 64, 64, 64)  128         ['conv2d_101[0][0]']             
+ ceNormalization)                                                                                 
+                                                                                                  
+ instance_normalization_8 (Inst  (None, 64, 64, 64)  128         ['conv2d_113[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_16 (Ins  (None, 64, 64, 64)  128         ['conv2d_125[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_24 (Ins  (None, 64, 64, 64)  128         ['conv2d_137[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu (ReLU)                   (None, 64, 64, 64)   0           ['instance_normalization[0][0]'] 
+                                                                                                  
+ re_lu_8 (ReLU)                 (None, 64, 64, 64)   0           ['instance_normalization_8[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_16 (ReLU)                (None, 64, 64, 64)   0           ['instance_normalization_16[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_24 (ReLU)                (None, 64, 64, 64)   0           ['instance_normalization_24[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_102 (Conv2D)            (None, 64, 64, 64)   36928       ['re_lu[0][0]']                  
+                                                                                                  
+ conv2d_114 (Conv2D)            (None, 64, 64, 64)   36928       ['re_lu_8[0][0]']                
+                                                                                                  
+ conv2d_126 (Conv2D)            (None, 64, 64, 64)   36928       ['re_lu_16[0][0]']               
+                                                                                                  
+ conv2d_138 (Conv2D)            (None, 64, 64, 64)   36928       ['re_lu_24[0][0]']               
+                                                                                                  
+ instance_normalization_1 (Inst  (None, 64, 64, 64)  128         ['conv2d_102[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_9 (Inst  (None, 64, 64, 64)  128         ['conv2d_114[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_17 (Ins  (None, 64, 64, 64)  128         ['conv2d_126[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_25 (Ins  (None, 64, 64, 64)  128         ['conv2d_138[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_1 (ReLU)                 (None, 64, 64, 64)   0           ['instance_normalization_1[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_9 (ReLU)                 (None, 64, 64, 64)   0           ['instance_normalization_9[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_17 (ReLU)                (None, 64, 64, 64)   0           ['instance_normalization_17[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_25 (ReLU)                (None, 64, 64, 64)   0           ['instance_normalization_25[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_103 (Conv2D)            (None, 32, 32, 128)  32768       ['re_lu_1[0][0]']                
+                                                                                                  
+ conv2d_115 (Conv2D)            (None, 32, 32, 128)  32768       ['re_lu_9[0][0]']                
+                                                                                                  
+ conv2d_127 (Conv2D)            (None, 32, 32, 128)  32768       ['re_lu_17[0][0]']               
+                                                                                                  
+ conv2d_139 (Conv2D)            (None, 32, 32, 128)  32768       ['re_lu_25[0][0]']               
+                                                                                                  
+ conv2d_104 (Conv2D)            (None, 32, 32, 128)  147584      ['conv2d_103[0][0]']             
+                                                                                                  
+ conv2d_116 (Conv2D)            (None, 32, 32, 128)  147584      ['conv2d_115[0][0]']             
+                                                                                                  
+ conv2d_128 (Conv2D)            (None, 32, 32, 128)  147584      ['conv2d_127[0][0]']             
+                                                                                                  
+ conv2d_140 (Conv2D)            (None, 32, 32, 128)  147584      ['conv2d_139[0][0]']             
+                                                                                                  
+ instance_normalization_2 (Inst  (None, 32, 32, 128)  256        ['conv2d_104[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_10 (Ins  (None, 32, 32, 128)  256        ['conv2d_116[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_18 (Ins  (None, 32, 32, 128)  256        ['conv2d_128[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_26 (Ins  (None, 32, 32, 128)  256        ['conv2d_140[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_2 (ReLU)                 (None, 32, 32, 128)  0           ['instance_normalization_2[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_10 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_10[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_18 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_18[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_26 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_26[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_105 (Conv2D)            (None, 32, 32, 128)  147584      ['re_lu_2[0][0]']                
+                                                                                                  
+ conv2d_117 (Conv2D)            (None, 32, 32, 128)  147584      ['re_lu_10[0][0]']               
+                                                                                                  
+ conv2d_129 (Conv2D)            (None, 32, 32, 128)  147584      ['re_lu_18[0][0]']               
+                                                                                                  
+ conv2d_141 (Conv2D)            (None, 32, 32, 128)  147584      ['re_lu_26[0][0]']               
+                                                                                                  
+ instance_normalization_3 (Inst  (None, 32, 32, 128)  256        ['conv2d_105[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_11 (Ins  (None, 32, 32, 128)  256        ['conv2d_117[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_19 (Ins  (None, 32, 32, 128)  256        ['conv2d_129[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_27 (Ins  (None, 32, 32, 128)  256        ['conv2d_141[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_3 (ReLU)                 (None, 32, 32, 128)  0           ['instance_normalization_3[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_11 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_11[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_19 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_19[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_27 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_27[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_106 (Conv2D)            (None, 16, 16, 256)  131072      ['re_lu_3[0][0]']                
+                                                                                                  
+ conv2d_118 (Conv2D)            (None, 16, 16, 256)  131072      ['re_lu_11[0][0]']               
+                                                                                                  
+ conv2d_130 (Conv2D)            (None, 16, 16, 256)  131072      ['re_lu_19[0][0]']               
+                                                                                                  
+ conv2d_142 (Conv2D)            (None, 16, 16, 256)  131072      ['re_lu_27[0][0]']               
+                                                                                                  
+ conv2d_107 (Conv2D)            (None, 16, 16, 256)  590080      ['conv2d_106[0][0]']             
+                                                                                                  
+ conv2d_119 (Conv2D)            (None, 16, 16, 256)  590080      ['conv2d_118[0][0]']             
+                                                                                                  
+ conv2d_131 (Conv2D)            (None, 16, 16, 256)  590080      ['conv2d_130[0][0]']             
+                                                                                                  
+ conv2d_143 (Conv2D)            (None, 16, 16, 256)  590080      ['conv2d_142[0][0]']             
+                                                                                                  
+ instance_normalization_4 (Inst  (None, 16, 16, 256)  512        ['conv2d_107[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_12 (Ins  (None, 16, 16, 256)  512        ['conv2d_119[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_20 (Ins  (None, 16, 16, 256)  512        ['conv2d_131[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_28 (Ins  (None, 16, 16, 256)  512        ['conv2d_143[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_4 (ReLU)                 (None, 16, 16, 256)  0           ['instance_normalization_4[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_12 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_12[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_20 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_20[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_28 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_28[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_108 (Conv2D)            (None, 16, 16, 256)  590080      ['re_lu_4[0][0]']                
+                                                                                                  
+ conv2d_120 (Conv2D)            (None, 16, 16, 256)  590080      ['re_lu_12[0][0]']               
+                                                                                                  
+ conv2d_132 (Conv2D)            (None, 16, 16, 256)  590080      ['re_lu_20[0][0]']               
+                                                                                                  
+ conv2d_144 (Conv2D)            (None, 16, 16, 256)  590080      ['re_lu_28[0][0]']               
+                                                                                                  
+ instance_normalization_5 (Inst  (None, 16, 16, 256)  512        ['conv2d_108[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_13 (Ins  (None, 16, 16, 256)  512        ['conv2d_120[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_21 (Ins  (None, 16, 16, 256)  512        ['conv2d_132[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_29 (Ins  (None, 16, 16, 256)  512        ['conv2d_144[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_5 (ReLU)                 (None, 16, 16, 256)  0           ['instance_normalization_5[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_13 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_13[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_21 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_21[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_29 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_29[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_109 (Conv2D)            (None, 8, 8, 512)    524288      ['re_lu_5[0][0]']                
+                                                                                                  
+ conv2d_121 (Conv2D)            (None, 8, 8, 512)    524288      ['re_lu_13[0][0]']               
+                                                                                                  
+ conv2d_133 (Conv2D)            (None, 8, 8, 512)    524288      ['re_lu_21[0][0]']               
+                                                                                                  
+ conv2d_145 (Conv2D)            (None, 8, 8, 512)    524288      ['re_lu_29[0][0]']               
+                                                                                                  
+ conv2d_110 (Conv2D)            (None, 8, 8, 512)    2359808     ['conv2d_109[0][0]']             
+                                                                                                  
+ conv2d_122 (Conv2D)            (None, 8, 8, 512)    2359808     ['conv2d_121[0][0]']             
+                                                                                                  
+ conv2d_134 (Conv2D)            (None, 8, 8, 512)    2359808     ['conv2d_133[0][0]']             
+                                                                                                  
+ conv2d_146 (Conv2D)            (None, 8, 8, 512)    2359808     ['conv2d_145[0][0]']             
+                                                                                                  
+ instance_normalization_6 (Inst  (None, 8, 8, 512)   1024        ['conv2d_110[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_14 (Ins  (None, 8, 8, 512)   1024        ['conv2d_122[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_22 (Ins  (None, 8, 8, 512)   1024        ['conv2d_134[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_30 (Ins  (None, 8, 8, 512)   1024        ['conv2d_146[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_6 (ReLU)                 (None, 8, 8, 512)    0           ['instance_normalization_6[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_14 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_14[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_22 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_22[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_30 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_30[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_111 (Conv2D)            (None, 8, 8, 512)    2359808     ['re_lu_6[0][0]']                
+                                                                                                  
+ conv2d_123 (Conv2D)            (None, 8, 8, 512)    2359808     ['re_lu_14[0][0]']               
+                                                                                                  
+ conv2d_135 (Conv2D)            (None, 8, 8, 512)    2359808     ['re_lu_22[0][0]']               
+                                                                                                  
+ conv2d_147 (Conv2D)            (None, 8, 8, 512)    2359808     ['re_lu_30[0][0]']               
+                                                                                                  
+ instance_normalization_7 (Inst  (None, 8, 8, 512)   1024        ['conv2d_111[0][0]']             
+ anceNormalization)                                                                               
+                                                                                                  
+ instance_normalization_15 (Ins  (None, 8, 8, 512)   1024        ['conv2d_123[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_23 (Ins  (None, 8, 8, 512)   1024        ['conv2d_135[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ instance_normalization_31 (Ins  (None, 8, 8, 512)   1024        ['conv2d_147[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_7 (ReLU)                 (None, 8, 8, 512)    0           ['instance_normalization_7[0][0]'
+                                                                 ]                                
+                                                                                                  
+ re_lu_15 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_15[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_23 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_23[0][0]
+                                                                 ']                               
+                                                                                                  
+ re_lu_31 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_31[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_112 (Conv2D)            (None, 4, 4, 1024)   2097152     ['re_lu_7[0][0]']                
+                                                                                                  
+ conv2d_124 (Conv2D)            (None, 4, 4, 1024)   2097152     ['re_lu_15[0][0]']               
+                                                                                                  
+ conv2d_136 (Conv2D)            (None, 4, 4, 1024)   2097152     ['re_lu_23[0][0]']               
+                                                                                                  
+ conv2d_148 (Conv2D)            (None, 4, 4, 1024)   2097152     ['re_lu_31[0][0]']               
+                                                                                                  
+ tf.concat_4 (TFOpLambda)       (None, 4, 4, 4096)   0           ['conv2d_112[0][0]',             
+                                                                  'conv2d_124[0][0]',             
+                                                                  'conv2d_136[0][0]',             
+                                                                  'conv2d_148[0][0]']             
+                                                                                                  
+ conv2d_149 (Conv2D)            (None, 4, 4, 1024)   37749760    ['tf.concat_4[0][0]']            
+                                                                                                  
+ instance_normalization_32 (Ins  (None, 4, 4, 1024)  2048        ['conv2d_149[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_32 (ReLU)                (None, 4, 4, 1024)   0           ['instance_normalization_32[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_150 (Conv2D)            (None, 4, 4, 1024)   9438208     ['re_lu_32[0][0]']               
+                                                                                                  
+ instance_normalization_33 (Ins  (None, 4, 4, 1024)  2048        ['conv2d_150[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_33 (ReLU)                (None, 4, 4, 1024)   0           ['instance_normalization_33[0][0]
+                                                                 ']                               
+                                                                                                  
+ tf.concat_5 (TFOpLambda)       (None, 8, 8, 2048)   0           ['re_lu_7[0][0]',                
+                                                                  're_lu_15[0][0]',               
+                                                                  're_lu_23[0][0]',               
+                                                                  're_lu_31[0][0]']               
+                                                                                                  
+ conv2d_transpose (Conv2DTransp  (None, 8, 8, 512)   2097664     ['re_lu_33[0][0]']               
+ ose)                                                                                             
+                                                                                                  
+ tf.concat_6 (TFOpLambda)       (None, 8, 8, 2560)   0           ['tf.concat_5[0][0]',            
+                                                                  'conv2d_transpose[0][0]']       
+                                                                                                  
+ conv2d_151 (Conv2D)            (None, 8, 8, 512)    11796992    ['tf.concat_6[0][0]']            
+                                                                                                  
+ instance_normalization_34 (Ins  (None, 8, 8, 512)   1024        ['conv2d_151[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_34 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_34[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_152 (Conv2D)            (None, 8, 8, 512)    2359808     ['re_lu_34[0][0]']               
+                                                                                                  
+ instance_normalization_35 (Ins  (None, 8, 8, 512)   1024        ['conv2d_152[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_35 (ReLU)                (None, 8, 8, 512)    0           ['instance_normalization_35[0][0]
+                                                                 ']                               
+                                                                                                  
+ tf.concat_7 (TFOpLambda)       (None, 16, 16, 1024  0           ['re_lu_5[0][0]',                
+                                )                                 're_lu_13[0][0]',               
+                                                                  're_lu_21[0][0]',               
+                                                                  're_lu_29[0][0]']               
+                                                                                                  
+ conv2d_transpose_1 (Conv2DTran  (None, 16, 16, 256)  524544     ['re_lu_35[0][0]']               
+ spose)                                                                                           
+                                                                                                  
+ tf.concat_8 (TFOpLambda)       (None, 16, 16, 1280  0           ['tf.concat_7[0][0]',            
+                                )                                 'conv2d_transpose_1[0][0]']     
+                                                                                                  
+ conv2d_153 (Conv2D)            (None, 16, 16, 256)  2949376     ['tf.concat_8[0][0]']            
+                                                                                                  
+ instance_normalization_36 (Ins  (None, 16, 16, 256)  512        ['conv2d_153[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_36 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_36[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_154 (Conv2D)            (None, 16, 16, 256)  590080      ['re_lu_36[0][0]']               
+                                                                                                  
+ instance_normalization_37 (Ins  (None, 16, 16, 256)  512        ['conv2d_154[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_37 (ReLU)                (None, 16, 16, 256)  0           ['instance_normalization_37[0][0]
+                                                                 ']                               
+                                                                                                  
+ tf.concat_9 (TFOpLambda)       (None, 32, 32, 512)  0           ['re_lu_3[0][0]',                
+                                                                  're_lu_11[0][0]',               
+                                                                  're_lu_19[0][0]',               
+                                                                  're_lu_27[0][0]']               
+                                                                                                  
+ conv2d_transpose_2 (Conv2DTran  (None, 32, 32, 128)  131200     ['re_lu_37[0][0]']               
+ spose)                                                                                           
+                                                                                                  
+ tf.concat_10 (TFOpLambda)      (None, 32, 32, 640)  0           ['tf.concat_9[0][0]',            
+                                                                  'conv2d_transpose_2[0][0]']     
+                                                                                                  
+ conv2d_155 (Conv2D)            (None, 32, 32, 128)  737408      ['tf.concat_10[0][0]']           
+                                                                                                  
+ instance_normalization_38 (Ins  (None, 32, 32, 128)  256        ['conv2d_155[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_38 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_38[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_156 (Conv2D)            (None, 32, 32, 128)  147584      ['re_lu_38[0][0]']               
+                                                                                                  
+ instance_normalization_39 (Ins  (None, 32, 32, 128)  256        ['conv2d_156[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_39 (ReLU)                (None, 32, 32, 128)  0           ['instance_normalization_39[0][0]
+                                                                 ']                               
+                                                                                                  
+ tf.concat_11 (TFOpLambda)      (None, 64, 64, 256)  0           ['re_lu_1[0][0]',                
+                                                                  're_lu_9[0][0]',                
+                                                                  're_lu_17[0][0]',               
+                                                                  're_lu_25[0][0]']               
+                                                                                                  
+ conv2d_transpose_3 (Conv2DTran  (None, 64, 64, 64)  32832       ['re_lu_39[0][0]']               
+ spose)                                                                                           
+                                                                                                  
+ tf.concat_12 (TFOpLambda)      (None, 64, 64, 320)  0           ['tf.concat_11[0][0]',           
+                                                                  'conv2d_transpose_3[0][0]']     
+                                                                                                  
+ conv2d_157 (Conv2D)            (None, 64, 64, 64)   184384      ['tf.concat_12[0][0]']           
+                                                                                                  
+ instance_normalization_40 (Ins  (None, 64, 64, 64)  128         ['conv2d_157[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_40 (ReLU)                (None, 64, 64, 64)   0           ['instance_normalization_40[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_158 (Conv2D)            (None, 64, 64, 64)   36928       ['re_lu_40[0][0]']               
+                                                                                                  
+ instance_normalization_41 (Ins  (None, 64, 64, 64)  128         ['conv2d_158[0][0]']             
+ tanceNormalization)                                                                              
+                                                                                                  
+ re_lu_41 (ReLU)                (None, 64, 64, 64)   0           ['instance_normalization_41[0][0]
+                                                                 ']                               
+                                                                                                  
+ conv2d_159 (Conv2D)            (None, 64, 64, 4)    256         ['re_lu_41[0][0]']               
+                                                                                                  
+==================================================================================================
+Total params: 104,887,616
+Trainable params: 104,887,616
+Non-trainable params: 0
+__________________________________________________________________________________________________
+
+
+
